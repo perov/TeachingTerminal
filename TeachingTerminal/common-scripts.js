@@ -1,3 +1,73 @@
+
+venture__venture_ec2_demo_instance_host = "54.235.201.199"
+venture__venture_ec2_demo_instance_port = 80
+
+how_many_directives_were_loaded_during_initialization = 0
+
+error_has_been_processed = false
+
+function ProcessRIPLError() {
+  if (error_has_been_processed == true) {
+    return
+  }
+  error_has_been_processed = true
+  if (venture__venture_ec2_demo_instance_host == $.cookie('venture__ripl_host') && venture__venture_ec2_demo_instance_port == $.cookie('venture__ripl_port')) {
+    if (confirm("Sorry, an error has happened. Most probably MIT.PCP Venture demo server needs to be restarted. Do you want try to restart it (it should take 2-3 seconds)?")) {
+      navigateToUrl("http://54.235.201.199:81/restart_venture_server")
+    }
+  } else {
+    alert("Sorry, an error has happened. Most probably, the server you specified (venture://" + $.cookie('venture__ripl_host') + ":" + $.cookie('venture__ripl_port') + ") is not active. You can choose another Venture RIPL by clicking 'Change'.")
+  }
+  throw "Error"
+}
+
+function OneMoreDirectiveHasBeenLoaded() {
+  how_many_directives_were_loaded_during_initialization++
+  if ($("#loading-status") != undefined) {
+    $("#loading-status").html("Demo is loading... <b>" + how_many_directives_were_loaded_during_initialization + '</b> directive(s) have been already loaded.')
+  }
+}
+
+function CheckCookieWithVentureRIPLAddress() {
+  if ($.cookie('venture__ripl_host') == undefined) {
+    GoToSelectRIPLAddress();
+  }
+  $("#ripl_address_info").html("You are using <i>venture://" + $.cookie('venture__ripl_host') + ":" + $.cookie('venture__ripl_port') + "</i>. <a href='#' style='text-decoration: underline;' onClick='GoToSelectRIPLAddress()'>Change</a>");
+}
+
+function GoToSelectRIPLAddress() {
+  navigateToUrl("select_venture_server.html")
+}
+// From here (with editions): http://stackoverflow.com/questions/4762254/javascript-window-location-does-not-set-referer-in-the-request-header
+function navigateToUrl(url) {
+    var f = document.createElement("FORM");
+    f.action = url;
+
+    var indexQM = url.indexOf("?");
+    if (indexQM>=0) {
+        // the URL has parameters => convert them to hidden form inputs
+        var params = url.substring(indexQM+1).split("&");
+        for (var i=0; i<params.length; i++) {
+            var keyValuePair = params[i].split("=");
+            var input = document.createElement("INPUT");
+            input.type="hidden";
+            input.name  = keyValuePair[0];
+            input.value = keyValuePair[1];
+            f.appendChild(input);
+        }
+    }
+    var input = document.createElement("INPUT");
+    input.type="hidden";
+    input.name  = "url_referrer";
+    input.value = window.location.pathname;
+    f.appendChild(input);
+
+    document.body.appendChild(f);
+    f.submit();
+}
+
+// ***
+
 function refreshInfButton() {
 	var r = new ripl();
 	var ret = r.cont_infer_status()

@@ -5,12 +5,9 @@ GLOBAL_LOCK = 0;
 GLOBAL_DATA = [];
 
 function ripl() {
-    this.serverURL = 'http://127.0.0.1:'; // http://ec2-54-235-201-199.compute-1.amazonaws.com
-    //this.serverURL = 'http://ec2-54-235-201-199.compute-1.amazonaws.com:';
-    this.port = 8082;
-  
-    //this.serverURL = 'http://ec2-54-235-201-199.compute-1.amazonaws.com:';
-    //this.port = 5050;
+  CheckCookieWithVentureRIPLAddress();
+  this.serverURL = 'http://' + $.cookie('venture__ripl_host') + ':'; // http://ec2-54-235-201-199.compute-1.amazonaws.com
+	this.port = $.cookie('venture__ripl_port'); // 8080
   this.assumes = "";
   this.observes = "";
   this.predicts = "";
@@ -79,6 +76,7 @@ ripl.prototype.ajaxPOST = function(URL,data_in){
       } else {
         GLOBAL_DATA = String(httpRequest.responseText).replace(/\n/g, "-NEWLINE-")
       }
+      LAST_TIME_ERROR = 1;
 			//$('#foo').data('spinner').stop();
 		},
        		complete: function() {
@@ -112,7 +110,8 @@ ripl.prototype.ajaxGET = function(URL){
       } else {
         GLOBAL_DATA = String(httpRequest.responseText).replace(/\n/g, "-NEWLINE-")
       }
-  			console.log("ajaxGET status=" + textStatus + ",error=" + errorThrown + 'URL:' + URL);
+  		console.log("ajaxGET status=" + textStatus + ",error=" + errorThrown + 'URL:' + URL);
+      LAST_TIME_ERROR = 1;
 			//$('#foo').data('spinner').stop();
 		},
        		complete: function() {
@@ -129,7 +128,7 @@ ripl.prototype.clearTrace = function ()
 	var URL = this.serverURL + this.port + "/"
 	var dict = {};
 	dict['DELETE']='yes';
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 	$.ajax({
 		url: URL, 
 		type: 'POST', 
@@ -143,12 +142,14 @@ ripl.prototype.clearTrace = function ()
       GLOBAL_DATA = data;
 		},
 		error: function(httpRequest, textStatus, errorThrown) { 
+			GLOBAL_LOCK = 0;
       if (httpRequest.responseText == undefined)
       {
         GLOBAL_DATA = errorThrown.message
       } else {
         GLOBAL_DATA = String(httpRequest.responseText).replace(/\n/g, "-NEWLINE-")
       }
+      LAST_TIME_ERROR = 1
   			// TODO: not working alert("status=" + textStatus + ",error=" + errorThrown);
 		},
        		complete: function() {
@@ -156,12 +157,15 @@ ripl.prototype.clearTrace = function ()
        		}
 	});
 
-	//while(GLOBAL_LOCK == 1) {}
+	while(GLOBAL_LOCK == 1) {}
 
 	//TODO: remove this later 
-	this.delay(100); //ms
+	// this.delay(100); //ms
 
 	//console.log('GOT OUT');
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
   
   return GLOBAL_DATA
@@ -176,7 +180,7 @@ ripl.prototype.clearTrace = function ()
 ripl.prototype.assume = function(namestr,expr,TERM)
 {
 	var URL = this.serverURL + this.port + "/assume"
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	if(!TERM) { 
 		console.log('NORMAL');
@@ -188,6 +192,9 @@ ripl.prototype.assume = function(namestr,expr,TERM)
 	}
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -210,7 +217,7 @@ ripl.prototype.predict = function(expr,TERM)
   this.predicts = this.predicts + "(PREDICT " + expr + ")<br>";
   
 	var URL = this.serverURL + this.port + "/predict"
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	if(!TERM) { 
 		this.ajaxPOST(URL, { 'expr_lst': JSON.stringify(parse(expr)) } );
@@ -220,6 +227,9 @@ ripl.prototype.predict = function(expr,TERM)
 	}
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -235,7 +245,7 @@ ripl.prototype.predict = function(expr,TERM)
 ripl.prototype.observe = function(expr,litval,TERM)
 {
 	var URL = this.serverURL + this.port + "/observe"
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	if(!TERM) {
 		this.ajaxPOST(URL, { 'expr_lst': JSON.stringify(parse(expr)), 'literal_val':JSON.stringify(parse(litval))  } );
@@ -245,6 +255,9 @@ ripl.prototype.observe = function(expr,litval,TERM)
 	}
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -253,11 +266,14 @@ ripl.prototype.observe = function(expr,litval,TERM)
 ripl.prototype.infer = function(MHiterations,threadsNumber)
 {
 	var URL = this.serverURL + this.port + "/infer"
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	this.ajaxPOST(URL,  {"MHiterations": MHiterations, "threadsNumber": threadsNumber}  );
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -266,11 +282,14 @@ ripl.prototype.infer = function(MHiterations,threadsNumber)
 ripl.prototype.start_cont_infer = function(threadsNumber)
 {
 	var URL = this.serverURL + this.port + "/start_cont_infer"
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	this.ajaxPOST(URL,  {"threadsNumber": threadsNumber} );
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -279,11 +298,14 @@ ripl.prototype.start_cont_infer = function(threadsNumber)
 ripl.prototype.stop_cont_infer = function()
 {
 	var URL = this.serverURL + this.port + "/stop_cont_infer"
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	this.ajaxPOST(URL,{});
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -291,11 +313,14 @@ ripl.prototype.stop_cont_infer = function()
 ripl.prototype.forget = function(directive_id)
 {
 	var URL = this.serverURL + this.port + "/" + String(directive_id);
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 	var data = {"DELETE": "yes"};
 	this.ajaxPOST(URL,data);
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -305,11 +330,14 @@ ripl.prototype.forget = function(directive_id)
 ripl.prototype.cont_infer_status = function()
 {
 	var URL = this.serverURL + this.port + "/cont_infer_status";
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	this.ajaxGET(URL);
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -318,11 +346,14 @@ ripl.prototype.cont_infer_status = function()
 ripl.prototype.report_directives = function()
 {
 	var URL = this.serverURL + this.port + "/";
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	this.ajaxGET(URL);
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
@@ -400,11 +431,14 @@ ripl.prototype.proceed_directives = function(directives)
 ripl.prototype.report_value = function(directive_id)
 {
 	var URL = this.serverURL + this.port + "/" + String(directive_id);
-	GLOBAL_LOCK = 1;
+	GLOBAL_LOCK = 1; LAST_TIME_ERROR = 0;
 
 	this.ajaxGET(URL);
 
 	while(GLOBAL_LOCK == 1) {}
+  if (LAST_TIME_ERROR == 1) {
+    ProcessRIPLError()
+  }
 	GLOBAL_LOCK = 0;
 	return GLOBAL_DATA
 }
