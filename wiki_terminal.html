@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="raphael-min.js"></script>
+    <script src="ripl.js"></script>
+    <script src="lispy.js"></script>
+    <script src="vis-curvefittingSimplified2.js"></script>
+    
+    
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="jquery-terminal/css/jquery.terminal.css" rel="stylesheet"/>
+    <link href="assets/css/fontstyles.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/slider.css" rel="sylesheet" type="text/css">
+    
+    
+    
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script> 
+    
+    
+    
+    <!-- From graphingCurveFitting_simple.html -->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="jquery-terminal/js/jquery-1.7.1.min.js"></script>
+    <script src="jquery-terminal/js/jquery.mousewheel-min.js"></script>
+    <script src="jquery-terminal/js/jquery.terminal-min.js"></script>
+    <script src="raphael-min.js"></script>
+    <script src="http://d3js.org/d3.v2.js"></script>
+    <script src="common-scripts.js"></script>
+    <script src="spin.min.js"></script>
+    <script src="Base.js"></script>
+    <script src="ripl.js"></script>
+    <script src="lispy.js"></script>
+    <script src="vis-module.js"></script>
+    
+    <!-- Mine -->
+    <link href="assets/css/jqx.base.css" rel="stylesheet">
+    <link href="jquery-terminal/css/jquery.terminal.css" rel="stylesheet"/>
+    <script src="terminal-management.js"></script> 
+    <script src="index-load.js"></script>
+    <script src="vistogram.js"></script>
+    
+    <script>
+      $(document).ready(function() {
+      $('img.codeblock').click(function() {
+      if (this.id == 'trickycoin'){
+      riplOBJ.sendTextCommand("ASSUME isTricky (bernoulli 0.1)");
+      riplOBJ.sendTextCommand("ASSUME myCoinWeight (if isTricky (beta 1.0 1.0) 0.5)");
+      riplOBJ.sendTextCommand("ASSUME myCoin (lambda () (bernoulli myCoinWeight))");
+      riplOBJ.sendTextCommand("OBSERVE (myCoin) true");
+      riplOBJ.sendTextCommand("INFER 1000");
+      }
+      $('#examplecode').html('<h3>    CODE: </h3><br>This will be prettier:<br><br><b>ASSUME</b> isTricky (bernoulli 0.1)<br><b>ASSUME</b> myCoinWeight (if isTricky (beta 1.0 1.0) 0.5)<br><b>ASSUME</b> myCoin (lambda () (bernoulli myCoinWeight))<br><b>OBSERVE</b> (myCoin) true<br>');
+      })});
+    </script>
+        
+    <script>
+      var dirString;
+      $(document).ready(function() {
+      $('img.dirbutton').click(function() {
+      $('#directivelist').html('<div align="left"><br><b> CURRENT DIRECTIVES: </b> <br><br><input type="radio" id="option1" name="option" value="isTricky"> <b>isTricky</b> <br><input type="radio" id="option2" name="option" value="myCoin"> <b>myCoin</b> <br><input type="radio" id="option3" name="option" value="myCoinWeight">  <b>myCoinWeight</b>  <br><br></div><b>Number of MH Iterations:</b><br><br>');
+      })
+      });
+    </script>
+
+<script type="text/javascript">
+  var bar, slider;
+  function init(){
+  
+  bar = document.getElementById('bar');
+  slider = document.getElementById('slider');
+  info = document.getElementById('info');
+  bar.addEventListener('mousedown', startSlide, false);
+  bar.addEventListener('mouseup', stopSlide, false);
+  }
+  
+  function startSlide(event){
+  var set_perc = ((((event.clientX - bar.offsetLeft) / bar.offsetWidth)).toFixed(2));
+  info.innerHTML = 'start' + set_perc + '%';
+  bar.addEventListener('mousemove', moveSlide, false);
+  slider.style.width = (set_perc * 100) + '%';
+  }
+  
+  function moveSlide(event){
+  var set_perc = ((((event.clientX - bar.offsetLeft) / bar.offsetWidth)).toFixed(2));
+  info.innerHTML = 'moving : ' + set_perc + '%';
+  slider.style.width = (set_perc * 100) + '%';
+  }
+  
+  function stopSlide(event){
+  var set_perc = ((((event.clientX - bar.offsetLeft) / bar.offsetWidth)).toFixed(2));
+  info.innerHTML = 'done : ' + set_perc + '%';
+  bar.removeEventListener('mousemove', moveSlide, false);
+  slider.style.width = (set_perc * 100) + '%';
+  }
+</script>
+
+<script>
+  $(document).ready(function() {
+  $('img.codebutton').click(function() {
+  riplOBJ.sendTextCommand(this.id)
+  });
+  });
+  
+</script>
+
+
+<script src="http://d3js.org/d3.v2.min.js?2.10.0"></script>
+  </head>
+  <body onLoad="$('#terminalWindow').attr('style','width: 650px; height:400px;'); ex = new vistogram(); init();">
+    <div class="vis-holder" style="margin-left:30px;margin-top:0px;">
+      <table>
+	<tr>
+	  <td style="width:175px;" valign="top" halign="left"></td>
+	  <td>    <h3>VENTURE TERMINAL</h3><br></td>
+	</tr>
+	<br><br>
+      </table>
+      <table>
+	<tr>
+	  <td style="width: 80px; height: 100%;" valign="top"><br><br></td>
+	  <td><img class="codeblock" src="assets/img/loadex.png" id="trickycoin"/></td>
+	  <td><img class="codebutton" src="assets/img/startinf.png" id="START_CONT_INFER"/></td> 
+	  <td><img class="codebutton" src="assets/img/stopinf.png" id="STOP_CONT_INFER"/></td>
+	  <td><img class="codebutton"  src="assets/img/clear.png" id="CLEAR"/></td>
+	</tr>
+	<table>
+	  <table>
+	    <tr><td style="vertical-align: top;"><br>
+     		<div id="terminalWindow"></div>
+		<br>
+	      </td>
+	      <td style="vertical-align: top;"><br><img class="dirbutton" src="assets/img/reportdir.png" id="REPORT_DIRECTIVES"/><br><br>
+		<div id="directivelist" style="padding-left:20px;"></div><br><br>
+		<a href="#" onClick="ex.run();"><img src="assets/img/plot.png"/></a></td>
+	      <td><div id="metaContainer" style="padding-left:100px;"></td>
+	    </tr>
+	  </table>
+	  <div id="bar">
+	    <div id="slider">
+	      There will be a slider bar here, as discussed.
+	    </div>
+	  </div>
+	</table>
+	
+	<div id="examplecode"></div>
+	<br><br><br>
+	<div id="forced_disconnection" style="display: none;">
+	  Oh, no, you have been disconnected from the SimpleInterpreter cloud.<br>
+	  Apologies!.<br>
+	  Please, contact Yura Perov (<a href="mailto:yura.perov@gmail.com">yura.perov@gmail.com</a>)
+	  about this issue.
+	</div>
+	</div>
+  </body>
+</html>
