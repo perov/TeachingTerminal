@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="raphael-min.js"></script>
+  <script src="ripl.js"></script>
+  <script src="lispy.js"></script>
+  <script src="vis-curvefittingSimplified2.js"></script>
+  
+
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="jquery-terminal/css/jquery.terminal.css" rel="stylesheet"/>
+    <link href="assets/css/fontstyles.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/slider.css" rel="sylesheet" type="text/css">
+
+
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+  <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
+  <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
+  <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>
+  <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script> 
+
+
+
+<body>  
+  <!-- From graphingCurveFitting_simple.html -->
+  <script src="assets/js/jquery.js"></script>
+  <script src="assets/js/bootstrap-transition.js"></script>
+  <script src="assets/js/bootstrap-alert.js"></script>
+  <script src="assets/js/bootstrap-modal.js"></script>
+  <script src="assets/js/bootstrap-dropdown.js"></script>
+  <script src="assets/js/bootstrap-scrollspy.js"></script>
+  <script src="assets/js/bootstrap-tab.js"></script>
+  <script src="assets/js/bootstrap-tooltip.js"></script>
+  <script src="assets/js/bootstrap-popover.js"></script>
+  <script src="assets/js/bootstrap-button.js"></script>
+  <script src="assets/js/bootstrap-collapse.js"></script>
+  <script src="assets/js/bootstrap-carousel.js"></script>
+  <script src="assets/js/bootstrap-typeahead.js"></script>
+  <script src="jquery-terminal/js/jquery-1.7.1.min.js"></script>
+  <script src="jquery-terminal/js/jquery.mousewheel-min.js"></script>
+  <script src="jquery-terminal/js/jquery.terminal-min.js"></script>
+  <script src="raphael-min.js"></script>
+  <script src="http://d3js.org/d3.v2.js"></script>
+  <script src="common-scripts.js"></script>
+  <script src="spin.min.js"></script>
+  <script src="Base.js"></script>
+  <script src="ripl.js"></script>
+  <script src="lispy.js"></script>
+  <script src="vis-module.js"></script>
+    
+  <!-- Mine -->
+  <link href="assets/css/jqx.base.css" rel="stylesheet">
+  <link href="jquery-terminal/css/jquery.terminal.css" rel="stylesheet"/>
+  <script src="terminal-management.js"></script> 
+  <script src="index-load.js"></script>
+  <script src="vistogram.js"></script>
+
+<script>
+  $(document).ready(function() {
+  $('img.codebutton').click(function() {
+  if (this.id == 'trickycoin'){
+  alert("I'm here!");
+  riplOBJ.sendTextCommand("ASSUME isTricky (bernoulli 0.1)");
+  riplOBJ.sendTextCommand("ASSUME myCoinWeight (if isTricky (beta 1.0 1.0) 0.5)");
+  riplOBJ.sendTextCommand("ASSUME myCoin (lambda () (bernoulli myCoinWeight))");
+  riplOBJ.sendTextCommand("OBSERVE (myCoin) true");
+  alert("I'm done!");
+  }})});
+  </script>
+<script>
+var bar, slider;
+
+fuzanction init(){
+
+        bar = document.getElementById('bar');
+        slider = document.getElementById('slider');
+        info = document.getElementById('info');
+        bar.addEventListener('mousedown', startSlide, false);
+        bar.addEventListener('mouseup', stopSlide, false);
+};
+
+function startSlide(event){
+        var set_perc = ((((event.clientX - bar.offsetLeft) / bar.offsetWidth)).toFixed(2));
+        info.innerHTML = 'start' + set_perc + '%';
+        bar.addEventListener('mousemove', moveSlide, false);
+        slider.style.width = (set_perc * 100) + '%';
+};
+
+function moveSlide(event){
+        var set_perc = ((((event.clientX - bar.offsetLeft) / bar.offsetWidth)).toFixed(2));
+        info.innerHTML = 'moving : ' + set_perc + '%';
+        slider.style.width = (set_perc * 100) + '%';
+};
+
+function stopSlide(event){
+        var set_perc = ((((event.clientX - bar.offsetLeft) / bar.offsetWidth)).toFixed(2));
+        info.innerHTML = 'done : ' + set_perc + '%';
+        bar.removeEventListener('mousemove', moveSlide, false);
+        slider.style.width = (set_perc * 100) + '%';
+};
+</script>
+
+<script>
+$(document).ready(function() {
+$('img.codebutton').click(function() {
+       riplOBJ.sendTextCommand(this.id)
+});
+});
+
+</script>
+
+
+<script src="http://d3js.org/d3.v2.min.js?2.10.0"></script>
+ 
+<body onLoad="$('#terminalWindow').attr('style','width: 650px; height:400px;'); ex = new vistogram(); init();">
+  <div class="vis-holder" style="margin-left:30px;margin-top:30px;"><br>
+    <table>
+      <tr>
+	<td style="width:175px;" valign="top"></td>
+	<td>    <h3>VENTURE TERMINAL</h3></td>
+      </tr>
+    </table>
+    <br>
+    <div id="working_space" style="display: ;">
+      <table><tr><td style="vertical-align: top;">
+            <div id="terminalWindow"></div>
+            <br>
+	  </td>
+	  <td width="10">&nbsp;</td>
+	  <td style="width: 300px; height: 100%;" valign="top">
+	    <div style="padding-left: 20px;">
+	      <img class="codebutton" src="assets/img/reportdir.png" id="REPORT_DIRECTIVES"/>
+	      <br>	  
+      </table>
+
+Number of MH Iterations:
+<div id='bar'>
+<div id='slider'>
+
+</div>
+</div>
+<br />
+
+<table>
+<tr>
+  <td style="width: 30px; height: 100%;" valign="top">
+<!--  <td><img class="codeblock" src="assets/img/loadbayes.png" id="bayes"></td> -->
+  <td><img class="codebutton" src="assets/img/loadex.png" id="trickycoin"/></td>
+  <td><img class="codebutton" src="assets/img/startinf.png" id="START_CONT_INFER"/></td> 
+  <td><img class="codebutton" src="assets/img/stopinf.png" id="STOP_CONT_INFER"/></td>
+  <td><img class="codebutton"  src="assets/img/clear.png" id="CLEAR"/></td>
+ <!--  <td><a href="#" onClick="plot_hist();"><img src="assets/img/plot.png"></a></td> -->
+  <td><a href="#" onClick="ex.run();"><img src="assets/img/plot.png"/></a></td>
+</tr>
+</table>
+
+<!--
+<table><tr><td style="vertical-align: top;">
+      <div id="graphicsContainer" style="background-color: white; width: 600px; height: 300px;"></div>
+      <br>
+</tr>
+</table>
+-->
+<!--
+get form output say there's one then go here 
+ <a href="#" onClick="ex = new vistemplate(); ex.run();"><img src="assets/img/plot.png"/></a>
+    <div class="vis-holder" style="margin-left:50px;">
+      Demo is loading...<br><br>
+      You should not see this message too long.<br><br>
+      If demo does not work, please, write to <a href="probcomp-sys@lists.csail.mit.edu">probcomp-sys@lists.csail.mit.edu</a>.
+    </div>
+-->
+
+<!--
+<a href="#"onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">REPORT_DIRECTIVES</a><br>
+<a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">START_CONT_INFER</a><br>
+<a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">STOP_CONT_INFER</a><br>
+<br>
+          <div style="width: 250px;">
+            <a href="#" onClick="$('#example1_div').show(); $('#example2_div').hide(); $('#example3_div').hide(); $('#example4_div').hide(); $('#example5_div').hide(); $('#example6_div').hide();  return false;" style="color: black;"><b>Positive mammogram</b></a><br>
+            <div id="example1_div" style="display: none;">
+            <ol style="padding-left: 20px; margin: 0px;">
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME breast-cancer (bernoulli 0.01)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME positive-mammogram (lambda () (if breast-cancer (bernoulli 0.8) (bernoulli 0.096)))</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">OBSERVE (positive-mammogram) true</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">INFER 1000</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">PREDICT (positive-mammogram)</a></li>
+            </ol>
+            </div>
+          </div><br>
+          <div style="width: 250px;">
+            <a href="#" onClick="$('#example1_div').hide(); $('#example2_div').show(); $('#example3_div').hide(); $('#example4_div').hide(); $('#example5_div').hide(); $('#example6_div').hide();  return false;" style="color: black;"><b>Fair/tricky coin</b></a><br>
+            <div id="example2_div">
+            <ol style="padding-left: 20px; margin: 0px;">
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME isTricky (bernoulli 0.1)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME myCoinWeight (if isTricky (beta 1.0 1.0) 0.5)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME myCoin (lambda () (bernoulli myCoinWeight))</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">OBSERVE (myCoin) true</a> <b>(repeat 9 times)</b></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">INFER 1000</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">PREDICT isTricky</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">INFER 1000</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">PREDICT isTricky</a></li>
+            </ol>
+            </div>
+          </div><br>
+          <div style="width: 250px;">
+            <a href="#" onClick="$('#example1_div').hide(); $('#example2_div').hide(); $('#example3_div').show(); $('#example4_div').hide(); $('#example5_div').hide(); $('#example6_div').hide();  return false;" style="color: black;"><b>Sprinkler Bayes network</b></a><br>
+            <div id="example3_div" style="display: none;">
+            <ol style="padding-left: 20px; margin: 0px;">
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME cloudy (bernoulli 0.5)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME sprinkler (bernoulli (if cloudy 0.1 0.5))</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME rain (bernoulli (if cloudy 0.8 0.2))</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME wet-grass (bernoulli (if sprinkler (if rain 0.99 0.9) (if rain 0.9 0.0)))</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">OBSERVE sprinkler true</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">PREDICT rain</a></li>
+            </ol>
+            </div>
+          </div><!--<br>
+          <div style="width: 250px;">
+            <a href="#" onClick="$('#example1_div').hide(); $('#example2_div').hide(); $('#example3_div').hide(); $('#example4_div').show(); $('#example5_div').hide(); $('#example6_div').hide();  return false;" style="color: black;"><b>HMM</b></a><br>
+            <div id="example4_div" style="display: none;">
+            <ol style="padding-left: 20px; margin: 0px;">
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>ASSUME hidden-state-0 (categorical 0.449 0.551)</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>ASSUME generate-next-state (lambda (state) (categorical (if (= state 1) 0.041 0.624) (if (= state 1) 0.959 0.376)))</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>ASSUME generate-observation (lambda (state) (categorical (if (= state 1) 0.161 0.442) (if (= state 1) 0.839 0.558)))</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>ASSUME hidden-state-1 (generate-next-state hidden-state-0)</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>ASSUME observing-state-1 (generate-observation hidden-state-1)</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>ASSUME hidden-state-2 (generate-next-state hidden-state-1)</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>ASSUME observing-state-2 (generate-observation hidden-state-2)</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>OBSERVE (noise-negate observing-state-1 0.1) 0</small></a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;"><small>OBSERVE (noise-negate observing-state-2 0.1) 1</small></a></li>
+            </ol>
+            </div>
+          </div><br>
+          <div style="width: 250px;">
+            <a href="#" onClick="$('#example1_div').hide(); $('#example2_div').hide(); $('#example3_div').hide(); $('#example4_div').hide(); $('#example5_div').show(); $('#example6_div').hide();  return false;" style="color: black;"><b>Ising</b></a><br>
+            <div id="example5_div" style="display: none;">
+            <ol style="padding-left: 20px; margin: 0px;">
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME x1-1 (bernoulli)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME x1-2 (bernoulli)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME x2-1 (bernoulli)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME x2-2 (bernoulli)</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">OBSERVE (bernoulli (power r[2.71828] (if (= x1-2 x1-1) r[0] r[-1]))) true</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">OBSERVE (bernoulli (power r[2.71828] (if (= x2-1 x1-1) r[0] r[-1]))) true</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">OBSERVE (bernoulli (power r[2.71828] (if (= x2-2 x1-2) r[0] r[-1]))) true</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">OBSERVE (bernoulli (power r[2.71828] (if (= x2-2 x2-1) r[0] r[-1]))) true</a></li>
+            </ol>
+            </div>
+          </div><br>
+          <div style="width: 250px;">
+            <a href="#" onClick="$('#example1_div').hide(); $('#example2_div').hide(); $('#example3_div').hide(); $('#example4_div').hide(); $('#example5_div').hide(); $('#example6_div').show(); return false;" style="color: black;"><b>Simple PCFG</b></a><br>
+            <div id="example6_div" style="display: none;">
+            <ol style="padding-left: 20px; margin: 0px;">
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">ASSUME out (lambda () (normal (if (bernoulli 0.7) 1 (+ (out) (out))) 2.0))</a></li>
+            <li><a href="#" onClick="riplOBJ.sendCommand(event); return false;" style="color: blue;">PREDICT (out)</a></li>
+            </ol>
+            </div>
+          </div><br>
+          <i>Please, choose any example and click one by one all commands to run them.</i>
+        </div>
+      </td> 
+      -->
+      <td>&nbsp;&nbsp;&nbsp;</td>
+      <td style="vertical-align: top;">
+        <div id="church_code"></div>
+        <div style="display: none;"><div style="display: none;"><input type="text" id="iteration_info" style="border:0; background-color: white;" value="" disabled></div>
+        <div id="slider" style="width: 500px; font-size: 10; display: none;"></div>
+        <div id="function_formula"></div>
+        <div id="noise_value"></div>
+        Number of MH burn-in iterations: <input type="text" id="number_of_MH_burnin_iterations" value="100" style="width: 50px;">
+        <input type="hidden" id="number_of_steps_to_show" value="1">
+        start from
+        <input type="radio" id="where_start_the_burnin__from_prior" name="where_start_the_burnin" value="from_prior"> the prior
+        <input type="radio" id="where_start_the_burnin__from_last_state" name="where_start_the_burnin" value="from_last_state" checked> the last state
+        <br>Polynomial degree (from 0 to 4 inclusive): <input type="text" id="polynomial_degree" value="4" style="width: 20px;">
+        <br>
+        <table><tr><td valign="top" style="width: 450px;">
+        <br><br></div>
+        </td><td>&nbsp;</td>
+        <td valign="top">
+          <small>
+          Noise type:
+      <input type="radio" name="noise_type" id="noise_type__uni_cont" checked> U[0.1; 1.0]
+      <input type="radio" name="noise_type" id="noise_type__beta1"> &beta;(1, 3)
+      <input type="radio" name="noise_type" id="noise_type__beta2"> &beta;(1, 3) * 0.9 + 0.1
+          </small>
+          <br>
+          <input type="radio" name="coeff_type" id="coeff_type__decr" checked> Decreasing coefficients (normal)<br>
+          <input type="radio" name="coeff_type" id="coeff_type__ident_sigma10"> Identical coefficients (normal, sigma = 10)<br>
+          <input type="radio" name="coeff_type" id="coeff_type__ident_sigma1"> Identical coefficients (normal, sigma = 1)<br>
+          <input type="radio" name="coeff_type" id="coeff_type__incr"> Increasing coefficients (normal)<br>
+          <input type="radio" name="coeff_type" id="coeff_type__ident_uniform"> Via &beta;<br>
+          <input type="checkbox" id="center_is_random"> If the center of distribution on coefficients is random<br>
+          <input type="checkbox" id="a_is_random" disabled> If the center of polynomial is random
+        </td></tr>
+        </table>
+        <br><div id="polynomialListbox" style="display: none;"></div>
+        <br><input type="button" value="Do inference" id="do_inference_button" style="display: none;">
+      </td></tr></table>
+    </div>
+    <div id="forced_disconnection" style="display: none;">
+      Oh, no, you has been disconnected from the SimpleInterpreter cloud.<br>
+      It is not very good. I am sorry about it.<br>
+      Please, contact Yura Perov (<a href="mailto:yura.perov@gmail.com">yura.perov@gmail.com</a>)
+      about this issue.
+    </div>
+</div>
+</body>
+</html>
