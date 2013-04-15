@@ -47,8 +47,19 @@ var vistogram = visualizer.extend({
 	    var values = [];
 	    var numMHiter = 100; // get this value from the slider
 	    
+	    if (document.getElementById("option1").checked){
+		dirvar = 'isTricky';
+            }
+            else if (document.getElementById("option2").checked){
+		dirvar = '(myCoin)';
+            }
+            else if (document.getElementById("option3").checked){
+                dirvar = 'myCoinWeight';
+	    }
+
+
 	    for(i=0; i<numMHiter; i++){
-	    	ret = this.ripl.predict('isTricky');
+	    	ret = this.ripl.predict(dirvar);
 		console.log('PREDICT RET:' + JSON.stringify(ret)); 
 		if (ret['val']){
 	    	    values.push(1);
