@@ -7,6 +7,9 @@ how_many_directives_were_loaded_during_initialization = 0
 error_has_been_processed = false
 
 function ProcessRIPLError() {
+  if (omit_errors == true) {
+    return
+  }
   if (error_has_been_processed == true) {
     return
   }
